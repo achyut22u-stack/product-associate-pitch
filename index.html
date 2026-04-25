@@ -716,38 +716,61 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Animate chat bubbles when scrolled into view
         const chats = document.querySelectorAll('[data-chat]');
+        const activeTimeouts = new Map(); // Store timeout IDs per container
+
         const chatObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
+                const container = entry.target;
+                const chatId = container.getAttribute('data-chat');
+
                 if (entry.isIntersecting) {
-                    const container = entry.target;
-                    const bubbles = container.querySelectorAll('.bubble[data-delay]');
-                    const typings = container.querySelectorAll('.typing[data-delay]');
+                    // Start animation if not already running
+                    if (!container.classList.contains('animating')) {
+                        container.classList.add('animating');
+                        
+                        const bubbles = container.querySelectorAll('.bubble[data-delay]');
+                        const typings = container.querySelectorAll('.typing[data-delay]');
+                        const timeouts = [];
+
+                        typings.forEach(t => {
+                            const d = parseInt(t.getAttribute('data-delay'));
+                            if (!isNaN(d)) {
+                                timeouts.push(setTimeout(() => t.classList.add('visible'), d));
+                                timeouts.push(setTimeout(() => t.classList.remove('visible'), d + 900));
+                            }
+                        });
+
+                        bubbles.forEach(b => {
+                            const d = parseInt(b.getAttribute('data-delay'));
+                            if (!isNaN(d)) {
+                                timeouts.push(setTimeout(() => b.classList.add('visible'), d));
+                            }
+                        });
+
+                        activeTimeouts.set(chatId, timeouts);
+                    }
+                } else {
+                    // Reset when out of view
+                    container.classList.remove('animating');
                     
-                    typings.forEach(t => {
-                        const d = parseInt(t.getAttribute('data-delay'));
-                        if (!isNaN(d)) {
-                            setTimeout(() => { t.classList.add('visible'); }, d);
-                            setTimeout(() => { t.classList.remove('visible'); }, d + 900);
-                        }
+                    // Clear any pending timeouts for this chat
+                    if (activeTimeouts.has(chatId)) {
+                        activeTimeouts.get(chatId).forEach(clearTimeout);
+                        activeTimeouts.delete(chatId);
+                    }
+
+                    // Hide all bubbles and typings
+                    container.querySelectorAll('.bubble, .typing').forEach(el => {
+                        el.classList.remove('visible');
                     });
-                    
-                    bubbles.forEach(b => {
-                        const d = parseInt(b.getAttribute('data-delay'));
-                        if (!isNaN(d)) {
-                            setTimeout(() => b.classList.add('visible'), d);
-                        }
-                    });
-                    
-                    chatObserver.unobserve(container);
                 }
             });
-        }, { threshold: 0.1 });
-        
+        }, { threshold: 0.15 });
+
         chats.forEach(c => chatObserver.observe(c));
 
-        // Animate cost bars when scrolled into view (if section exists)
+        // Simplified cost section observer
         const costSection = document.getElementById('cost-compare');
         if (costSection) {
             const costObserver = new IntersectionObserver((entries) => {
@@ -756,7 +779,10 @@
                         document.querySelectorAll('.cost-fill').forEach(bar => {
                             bar.style.width = bar.getAttribute('data-width') + '%';
                         });
-                        costObserver.unobserve(entry.target);
+                    } else {
+                        document.querySelectorAll('.cost-fill').forEach(bar => {
+                            bar.style.width = '0';
+                        });
                     }
                 });
             }, { threshold: 0.1 });
