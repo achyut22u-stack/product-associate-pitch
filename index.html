@@ -715,42 +715,54 @@
     </div>
 
     <script>
-    // Animate chat bubbles when scrolled into view
-    const chats = document.querySelectorAll('[data-chat]');
-    const chatObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const container = entry.target;
-                const bubbles = container.querySelectorAll('.bubble[data-delay]');
-                const typings = container.querySelectorAll('.typing[data-delay]');
-                typings.forEach(t => {
-                    const d = parseInt(t.getAttribute('data-delay'));
-                    setTimeout(() => { t.classList.add('visible'); }, d);
-                    setTimeout(() => { t.classList.remove('visible'); }, d + 900);
-                });
-                bubbles.forEach(b => {
-                    const d = parseInt(b.getAttribute('data-delay'));
-                    setTimeout(() => b.classList.add('visible'), d);
-                });
-                chatObserver.unobserve(container);
-            }
-        });
-    }, { threshold: 0.3 });
-    chats.forEach(c => chatObserver.observe(c));
+    document.addEventListener('DOMContentLoaded', () => {
+        // Animate chat bubbles when scrolled into view
+        const chats = document.querySelectorAll('[data-chat]');
+        const chatObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const container = entry.target;
+                    const bubbles = container.querySelectorAll('.bubble[data-delay]');
+                    const typings = container.querySelectorAll('.typing[data-delay]');
+                    
+                    typings.forEach(t => {
+                        const d = parseInt(t.getAttribute('data-delay'));
+                        if (!isNaN(d)) {
+                            setTimeout(() => { t.classList.add('visible'); }, d);
+                            setTimeout(() => { t.classList.remove('visible'); }, d + 900);
+                        }
+                    });
+                    
+                    bubbles.forEach(b => {
+                        const d = parseInt(b.getAttribute('data-delay'));
+                        if (!isNaN(d)) {
+                            setTimeout(() => b.classList.add('visible'), d);
+                        }
+                    });
+                    
+                    chatObserver.unobserve(container);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        chats.forEach(c => chatObserver.observe(c));
 
-    // Animate cost bars when scrolled into view
-    const costSection = document.getElementById('cost-compare');
-    const costObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                document.querySelectorAll('.cost-fill').forEach(bar => {
-                    bar.style.width = bar.getAttribute('data-width') + '%';
+        // Animate cost bars when scrolled into view (if section exists)
+        const costSection = document.getElementById('cost-compare');
+        if (costSection) {
+            const costObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.querySelectorAll('.cost-fill').forEach(bar => {
+                            bar.style.width = bar.getAttribute('data-width') + '%';
+                        });
+                        costObserver.unobserve(entry.target);
+                    }
                 });
-                costObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.4 });
-    if (costSection) costObserver.observe(costSection);
+            }, { threshold: 0.1 });
+            costObserver.observe(costSection);
+        }
+    });
     </script>
 
 </body>
