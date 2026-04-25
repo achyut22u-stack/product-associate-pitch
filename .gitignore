@@ -1,0 +1,22 @@
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Backend (Keep separate as it's already its own repo)
+whatsapp_backend/
+
+# Sensitive Files
+*.json
+*.docx
+CREDENTIALS.md
+Pending To-dos.md
+
+# Python
+__pycache__/
+*.pyc
+
+# Temp Files
+~$*.docx
+survey_tool_temp.txt

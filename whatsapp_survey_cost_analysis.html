@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Analysis: AI Enumerator vs. Human</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #F3F3EE;
+            --mint-bg: #DEE7DD;
+            --coral: #FF6651;
+            --soft-red: #FF8075;
+            --mustard: #F4D276;
+            --teal: #5FA4A9;
+            --navy: #1D2B38;
+            --white: #FFFFFF;
+            
+            --font-mono: 'Space Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-light);
+            color: var(--navy);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, .mono {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .header {
+            margin-bottom: 60px;
+            border-bottom: 2px solid var(--navy);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--coral);
+        }
+
+        .header p {
+            font-family: var(--font-mono);
+            color: var(--teal);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--navy);
+            padding: 40px;
+            position: relative;
+            transition: transform 0.3s ease;
+            box-shadow: 4px 4px 0px var(--navy);
+        }
+
+        .card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--navy);
+        }
+
+        .card.human {
+            background-color: var(--soft-red);
+            color: var(--navy);
+        }
+
+        .card.ai {
+            background-color: var(--mint-bg);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--navy);
+            padding-bottom: 10px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .metric .value {
+            font-family: var(--font-mono);
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .total-cost {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--navy);
+            font-size: 2rem;
+            font-family: var(--font-mono);
+            text-align: right;
+            color: var(--navy);
+        }
+
+        .assumptions {
+            background-color: var(--mustard);
+            border: 1px solid var(--navy);
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 4px 4px 0px var(--navy);
+        }
+
+        .assumptions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .assumptions ul {
+            list-style-type: square;
+            padding-left: 20px;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 40px;
+        }
+
+        .assumptions li {
+            font-size: 1rem;
+        }
+
+        .roi-section {
+            background-color: var(--teal);
+            color: var(--white);
+            padding: 60px;
+            text-align: center;
+            border: 1px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+        }
+
+        .roi-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .roi-section .savings {
+            font-size: 5rem;
+            color: var(--mustard);
+            text-shadow: 2px 2px 0px var(--navy);
+            margin: 20px 0;
+        }
+        
+        .roi-section p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--white);
+            border: 1px solid var(--navy);
+        }
+
+        .details-table th, .details-table td {
+            border: 1px solid var(--navy);
+            padding: 15px;
+            text-align: left;
+        }
+
+        .details-table th {
+            background: var(--bg-light);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .details-table td {
+            font-size: 0.95rem;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>AI Enumerator vs. Human</h1>
+        <p>Cost Per Interview Analysis (Monthly Projection)</p>
+    </div>
+
+    <div class="assumptions">
+        <h3>📊 Baseline Assumptions</h3>
+        <ul>
+            <li><strong>Survey Volume:</strong> 15 projects/mo × 300 surveys = 4,500 total/mo</li>
+            <li><strong>Survey Length:</strong> 10-15 questions (6 open-ended)</li>
+            <li><strong>Total Messages:</strong> ~40 messages per survey (due to reminders/follow-ups)</li>
+            <li><strong>Duration:</strong> 10-15 minutes per survey</li>
+            <li><strong>Human Cost:</strong> $4.50 per completed interview (contractor rate)</li>
+            <li><strong>AI Model:</strong> GPT-4o-mini (highly capable & cost-efficient for conversation)</li>
+            <li><strong>Infrastructure:</strong> Render Pro ($25/mo) + Twilio WhatsApp ($0.005/msg)</li>
+        </ul>
+    </div>
+
+    <div class="grid">
+        <!-- Human Cost Card -->
+        <div class="card human">
+            <h2>Current Human Cost</h2>
+            <p style="margin-bottom: 30px;">Based on standard 60dB contractor rates for phone surveys.</p>
+            
+            <div class="metric">
+                <span>Cost Per Interview</span>
+                <span class="value">$4.50</span>
+            </div>
+            <div class="metric">
+                <span>Monthly Volume</span>
+                <span class="value">4,500</span>
+            </div>
+            
+            <div class="total-cost">
+                Total: $20,250 <span style="font-size: 1rem;">/ mo</span>
+            </div>
+        </div>
+
+        <!-- AI Cost Card -->
+        <div class="card ai">
+            <h2>AI WhatsApp Bot Cost</h2>
+            <p style="margin-bottom: 30px;">Variable API costs + fixed hosting. Highly scalable.</p>
+            
+            <div class="metric">
+                <span>Twilio/Meta Cost (per survey)</span>
+                <span class="value">~$0.22</span>
+            </div>
+            <div class="metric">
+                <span>OpenAI Cost (per survey)</span>
+                <span class="value">~$0.01</span>
+            </div>
+            <div class="metric">
+                <span>Total Cost Per Interview</span>
+                <span class="value" style="color: var(--coral);">~$0.23</span>
+            </div>
+            
+            <div class="total-cost">
+                Total: ~$1,060 <span style="font-size: 1rem;">/ mo</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="roi-section">
+        <h2>Estimated Monthly Savings</h2>
+        <div class="savings mono">$19,190</div>
+        <p>A <strong>95% reduction</strong> in direct field execution costs, while maintaining deep qualitative data gathering and zero drop in standardized reporting quality.</p>
+    </div>
+
+    <h3 style="margin-top: 60px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 1.5rem;">Detailed Breakdown (Per Survey)</h3>
+    <table class="details-table">
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Provider</th>
+                <th>Calculation Formula</th>
+                <th>Estimated Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>WhatsApp Template (Initiation)</strong></td>
+                <td>Meta / Twilio</td>
+                <td>1 Utility Template ($0.015) + Twilio Fee ($0.005)</td>
+                <td class="mono">$0.020</td>
+            </tr>
+            <tr>
+                <td><strong>Session Messages (Back & Forth)</strong></td>
+                <td>Twilio</td>
+                <td>39 messages × $0.005/msg (Meta Service window is free)</td>
+                <td class="mono">$0.195</td>
+            </tr>
+            <tr>
+                <td><strong>LLM Intelligence (GPT-4o-mini)</strong></td>
+                <td>OpenAI</td>
+                <td>~40k input tokens ($0.15/1M) + ~2k output tokens ($0.60/1M)</td>
+                <td class="mono">$0.007</td>
+            </tr>
+            <tr>
+                <td><strong>Backend Hosting (Amortized)</strong></td>
+                <td>Render</td>
+                <td>$25/mo Server / 4,500 surveys</td>
+                <td class="mono">$0.005</td>
+            </tr>
+            <tr style="background-color: var(--mint-bg); font-weight: bold;">
+                <td colspan="3" style="text-align: right;">Total Estimated Cost Per Survey:</td>
+                <td class="mono" style="color: var(--coral);">$0.227</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p style="font-size: 0.85rem; color: #666; margin-top: 20px; max-width: 800px;">
+        *Note: If GPT-4o is used instead of GPT-4o-mini for maximum reasoning quality, the LLM cost rises from ~$0.007 to ~$0.12 per survey, bringing the total cost per survey to ~$0.34 (still an ~92% cost reduction vs human enumerators).
+    </p>
+
+</div>
+
+</body>
+</html>

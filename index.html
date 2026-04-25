@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60dB | The AI Enumerator Prototype</title>
+    <style>
+        /* Modern Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-body: #DEE7DD; /* Soft Mint/Greenish Grey per design system */
+            --bg-chat: #FAFAF7; /* Off-White per design system */
+            --primary-accent: #FF6651; /* Coral/Vibrant Red */
+            --secondary-accent: #5FA4A9; /* Deep Teal */
+            --text-heading: 'Space Mono', monospace;
+            --text-body: 'Inter', sans-serif;
+            --text-dark: #1D2B38;
+            --border-color: #000000;
+            --glass-bg: rgba(250, 250, 247, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--text-body);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            background-image: radial-gradient(#5FA4A9 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        /* Nav back */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-family: var(--text-heading);
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 45px;
+            transition: all 0.3s ease;
+            background: var(--bg-chat);
+            z-index: 100;
+            box-shadow: 4px 4px 0 var(--border-color);
+        }
+        .back-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border-color);
+            background-color: var(--primary-accent);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 80px auto 100px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        /* Hero / Animation Section */
+        .hero-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            padding: 50px;
+            box-shadow: 12px 12px 0 var(--border-color);
+            border-radius: 12px;
+        }
+        
+        .hero-section h1 {
+            font-family: var(--text-heading);
+            font-size: 2.2rem;
+            margin-top: 0;
+            margin-bottom: 40px;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .animate-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Staggered animation delays */
+        .animate-text:nth-child(2) { animation-delay: 0.3s; }
+        .animate-text:nth-child(3) { animation-delay: 1.1s; }
+        .animate-text:nth-child(4) { animation-delay: 1.9s; }
+        .animate-text:nth-child(5) { animation-delay: 2.7s; }
+        .animate-text:nth-child(6) { animation-delay: 3.5s; }
+
+        .animate-text .icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            background: var(--bg-body);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 0 var(--border-color);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            padding: 50px;
+            box-shadow: 12px 12px 0 var(--border-color);
+            border-radius: 12px;
+        }
+
+        .architecture-section h2 {
+            font-family: var(--text-heading);
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Data Pipeline Styles */
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .pipeline-node {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            padding: 25px 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 4px 4px 0 var(--border-color);
+            flex: 1;
+            min-width: 160px;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.2s;
+        }
+        .pipeline-node:hover {
+            transform: translateY(-5px);
+        }
+
+        .pipeline-node h3 {
+            font-family: var(--text-heading);
+            color: var(--primary-accent);
+            font-size: 1.1rem;
+            margin: 0 0 10px 0;
+        }
+
+        .pipeline-node p {
+            font-size: 0.9rem;
+            margin: 0;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        /* Flowing Data Connectors */
+        .pipeline-connector {
+            height: 6px;
+            flex: 1;
+            min-width: 40px;
+            background-color: rgba(95, 164, 169, 0.2); /* Faded secondary accent */
+            position: relative;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .data-packet {
+            position: absolute;
+            height: 100%;
+            width: 30%;
+            background-color: var(--secondary-accent);
+            box-shadow: 0 0 10px var(--secondary-accent);
+            border-radius: 3px;
+            animation: flowPacket 1.5s infinite linear;
+        }
+
+        .data-packet.delay-1 { animation-delay: 0.5s; }
+        .data-packet.delay-2 { animation-delay: 1.0s; }
+
+        @keyframes flowPacket {
+            0% { left: -30%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        /* Cost Breakdown Styles */
+        .cost-breakdown {
+            margin-top: 40px;
+            background: var(--text-dark);
+            color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 6px 6px 0 var(--border-color);
+            border: 2px solid var(--border-color);
+            text-align: center;
+        }
+
+        .cost-equation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-family: var(--text-heading);
+        }
+
+        .cost-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        
+        .cost-item span {
+            font-size: 0.8rem;
+            font-family: var(--text-body);
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cost-math {
+            font-size: 1.5rem;
+            color: var(--primary-accent);
+            font-weight: bold;
+        }
+
+        .cost-total {
+            background: var(--primary-accent);
+            padding: 12px 25px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            border: 2px solid var(--border-color);
+            box-shadow: 4px 4px 0 var(--border-color);
+        }
+
+        .cost-total span {
+            font-size: 0.85rem;
+            font-family: var(--text-body);
+            font-weight: 600;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 850px) {
+            .pipeline-container {
+                flex-direction: column;
+            }
+            .pipeline-connector {
+                width: 6px;
+                min-height: 40px;
+                min-width: auto;
+            }
+            .data-packet {
+                width: 100%;
+                height: 30%;
+                animation: flowPacketVertical 1.5s infinite linear;
+            }
+            @keyframes flowPacketVertical {
+                0% { top: -30%; left: 0; opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { top: 100%; left: 0; opacity: 0; }
+            }
+            .cost-equation {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--text-dark);
+            color: #fff;
+            border: 2px solid var(--border-color);
+            padding: 50px;
+            box-shadow: 12px 12px 0 var(--primary-accent);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .demo-section h2 {
+            font-family: var(--text-heading);
+            font-size: 2.2rem;
+            margin: 0;
+            color: var(--primary-accent);
+            text-align: center;
+        }
+
+        .persona-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 30px;
+            border-left: 6px solid var(--secondary-accent);
+        }
+
+        .persona-card h3 {
+            font-family: var(--text-heading);
+            margin-top: 0;
+            color: var(--secondary-accent);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .persona-card p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #E0E0E0;
+        }
+
+        .demo-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            color: var(--text-dark);
+            padding: 40px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .qr-code {
+            border: 4px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 200px;
+            height: 200px;
+        }
+
+        .launch-btn {
+            background-color: #25D366; /* WhatsApp Green */
+            color: #fff;
+            border: 2px solid var(--border-color);
+            padding: 15px 35px;
+            font-family: var(--text-heading);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 0 var(--border-color);
+            border-radius: 8px;
+        }
+
+        .launch-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border-color);
+        }
+
+        .scroll-indicator {
+            text-align: center;
+            font-family: var(--text-heading);
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-top: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        /* ── FEATURES ── */
+        .features-section { display:flex; flex-direction:column; gap:50px; }
+        .section-label { font-family:var(--text-heading); font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; color:var(--secondary-accent); display:block; margin-bottom:8px; }
+        .features-header { text-align:center; }
+        .features-header h2 { font-family:var(--text-heading); font-size:2rem; margin:8px 0 12px; }
+        .features-header p { color:#555; max-width:600px; margin:0 auto; line-height:1.6; }
+        .feature-card { background:var(--glass-bg); border:2px solid var(--border-color); border-radius:12px; box-shadow:12px 12px 0 var(--border-color); display:grid; grid-template-columns:1fr 1fr; overflow:hidden; }
+        .feature-info { padding:40px; display:flex; flex-direction:column; justify-content:center; }
+        .feature-num { font-family:var(--text-heading); font-size:3.5rem; font-weight:700; color:var(--primary-accent); opacity:0.2; line-height:1; margin-bottom:8px; }
+        .feature-info h3 { font-family:var(--text-heading); font-size:1.3rem; margin:0 0 12px; }
+        .feature-info p { font-size:0.95rem; line-height:1.6; color:#555; margin:0; }
+        .feature-phone { background:#e5ddd5; display:flex; flex-direction:column; border-left:2px solid var(--border-color); min-height:360px; }
+        .wa-header { background:#075E54; color:#fff; padding:12px 15px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+        .wa-avatar { width:34px; height:34px; border-radius:50%; background:var(--secondary-accent); display:flex; align-items:center; justify-content:center; font-family:var(--text-heading); font-size:0.8rem; font-weight:700; color:#fff; flex-shrink:0; }
+        .wa-info .wa-name { font-family:var(--text-heading); font-size:0.9rem; font-weight:700; }
+        .wa-info .wa-status { font-size:0.72rem; opacity:0.75; }
+        .wa-messages { flex:1; padding:14px; display:flex; flex-direction:column; gap:7px; overflow:hidden; }
+        .bubble { max-width:78%; padding:8px 11px; border-radius:8px; font-size:0.85rem; line-height:1.5; opacity:0; transform:translateY(8px); transition:opacity 0.45s ease, transform 0.45s ease; }
+        .bubble.visible { opacity:1; transform:translateY(0); }
+        .bubble.ankur { background:#fff; align-self:flex-start; border-radius:0 8px 8px 8px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+        .bubble.user { background:#dcf8c6; align-self:flex-end; border-radius:8px 0 8px 8px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+        .bubble .btime { font-size:0.68rem; color:#999; text-align:right; margin-top:3px; }
+        .voice-note { display:flex; align-items:center; gap:8px; }
+        .play-btn { width:30px; height:30px; border-radius:50%; background:var(--secondary-accent); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .waveform { display:flex; align-items:center; gap:2px; flex:1; }
+        .waveform-bar { width:3px; border-radius:2px; background:var(--secondary-accent); opacity:0.65; }
+        .typing { background:#fff; align-self:flex-start; border-radius:0 8px 8px 8px; padding:10px 13px; box-shadow:0 1px 2px rgba(0,0,0,0.1); opacity:0; transform:translateY(8px); transition:opacity 0.45s ease, transform 0.45s ease; display:flex; gap:4px; align-items:center; }
+        .typing.visible { opacity:1; transform:translateY(0); }
+        .typing-dot { width:6px; height:6px; border-radius:50%; background:#aaa; animation:tdot 1.2s infinite; }
+        .typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
+        @keyframes tdot { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+        /* ── WA PAYMENT CARD ── */
+        .wa-payment-card { background: linear-gradient(135deg, #e2f5d3 0%, #cbeab6 100%); border-radius: 10px; padding: 25px 20px 15px; margin: 4px 0; border: 1px solid #bce1a8; width: 240px; box-shadow: inset 0 0 40px rgba(255,255,255,0.4); }
+        .wa-payment-amount { font-size: 2.6rem; font-weight: 600; color: #00755b; text-align: center; margin-bottom: 25px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; letter-spacing: -1px; }
+        .wa-payment-status { border-top: 1px solid rgba(0, 117, 91, 0.15); padding-top: 12px; display: flex; align-items: center; gap: 10px; }
+        .wa-payment-icon { width: 26px; height: 26px; border-radius: 50%; background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; flex-shrink: 0; }
+        .wa-payment-text { font-size: 0.85rem; color: #333; line-height: 1.4; }
+        .wa-payment-text strong { color: #00755b; display: block; font-weight: 600; font-size: 0.8rem; margin-top: 2px; }
+        /* ── COST COMPARE ── */
+        .cost-compare { background:var(--text-dark); color:#fff; border:2px solid var(--border-color); border-radius:12px; padding:50px; box-shadow:12px 12px 0 var(--primary-accent); }
+        .cost-compare h2 { font-family:var(--text-heading); font-size:2rem; text-align:center; margin:0 0 40px; }
+        .cost-bars { max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:30px; }
+        .cost-row-label { display:flex; justify-content:space-between; margin-bottom:8px; font-family:var(--text-heading); }
+        .cost-row-name { font-size:0.95rem; }
+        .cost-row-value { font-size:1rem; font-weight:700; }
+        .cost-track { background:rgba(255,255,255,0.1); border-radius:4px; height:14px; overflow:hidden; }
+        .cost-fill { height:100%; border-radius:4px; width:0; transition:width 1.6s ease; }
+        .fill-ankur { background:var(--secondary-accent); }
+        .fill-ra { background:var(--primary-accent); }
+        .cost-note { text-align:center; margin-top:30px; font-size:0.9rem; opacity:0.6; font-style:italic; }
+        @media(max-width:700px){.feature-card{grid-template-columns:1fr}.feature-phone{border-left:none;border-top:2px solid var(--border-color)}}
+
+    </style>
+</head>
+<body>
+
+    <!-- Removed back button since this is now the main landing page -->
+
+    <div class="container">
+        
+        <!-- Hero Heading -->
+        <div class="hero-section">
+            <h1 style="margin-bottom: 20px;">Meet Ankur<br><span style="font-size: 1.5rem; color: var(--secondary-accent); font-weight: normal;">an intelligent chat-based enumerator</span></h1>
+        </div>
+
+        <!-- ── FEATURES SECTION ── -->
+        <div class="features-section" id="features">
+            <div class="features-header">
+                <span class="section-label">Features</span>
+                <h2>Ankur in Action</h2>
+                <p>Five capabilities that make an LLM enumerator fundamentally different from a linear chatbot.</p>
+            </div>
+
+            <!-- Feature 1: Intelligent Conversations -->
+            <div class="feature-card">
+                <div class="feature-info">
+                    <div class="feature-num">01</div>
+                    <h3>Intelligent Conversations</h3>
+                    <p>Ankur listens, interprets, and responds naturally. When a respondent gives a vague answer, Ankur probes with relevant follow-up questions — just like a skilled human researcher would.</p>
+                </div>
+                <div class="feature-phone">
+                    <div class="wa-header">
+                        <div class="wa-avatar">AK</div>
+                        <div class="wa-info"><div class="wa-name">Ankur — 60 Decibels</div><div class="wa-status">online</div></div>
+                    </div>
+                    <div class="wa-messages" data-chat="1">
+                        <div class="bubble ankur" data-delay="0">Do you face any challenges with your d.light product?<div class="btime">10:14</div></div>
+                        <div class="bubble user" data-delay="1200">I don't know..<div class="btime">10:15</div></div>
+                        <div class="typing" data-delay="2200"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="bubble ankur" data-delay="3400">That's okay — take a moment to reflect. Thinking about your experience using the d.light so far, is there anything that hasn't worked as you expected, or any moment where you felt unsure or frustrated?<div class="btime">10:15</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Voice Note Recognition -->
+            <div class="feature-card">
+                <div class="feature-info">
+                    <div class="feature-num">02</div>
+                    <h3>Voice Note Recognition</h3>
+                    <p>Respondents can answer in their most comfortable format. Ankur transcribes voice notes in real time using Whisper, acknowledges them, and continues the survey without missing a beat.</p>
+                </div>
+                <div class="feature-phone">
+                    <div class="wa-header">
+                        <div class="wa-avatar">AK</div>
+                        <div class="wa-info"><div class="wa-name">Ankur — 60 Decibels</div><div class="wa-status">online</div></div>
+                    </div>
+                    <div class="wa-messages" data-chat="2">
+                        <div class="bubble ankur" data-delay="0">On a scale of 0–10, how likely are you to recommend d.light to a friend or family member? (0 = not at all, 10 = extremely likely)<div class="btime">10:22</div></div>
+                        <div class="bubble user" data-delay="1300">
+                            <div class="voice-note">
+                                <div class="play-btn"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div>
+                                <div class="waveform">
+                                    <div class="waveform-bar" style="height:8px"></div><div class="waveform-bar" style="height:14px"></div><div class="waveform-bar" style="height:10px"></div><div class="waveform-bar" style="height:18px"></div><div class="waveform-bar" style="height:12px"></div><div class="waveform-bar" style="height:20px"></div><div class="waveform-bar" style="height:9px"></div><div class="waveform-bar" style="height:15px"></div><div class="waveform-bar" style="height:11px"></div><div class="waveform-bar" style="height:8px"></div>
+                                </div>
+                                <span class="voice-duration">0:18</span>
+                            </div>
+                            <div class="btime">10:23</div>
+                        </div>
+                        <div class="typing" data-delay="2400"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="bubble ankur" data-delay="3600">Thank you — I heard a score of 7 in your voice note. That's great to hear! You're fairly positive about d.light. What specifically about the product caused you to give it that score?<div class="btime">10:23</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3: Catching Inconsistencies -->
+            <div class="feature-card">
+                <div class="feature-info">
+                    <div class="feature-num">03</div>
+                    <h3>Catching Inconsistencies</h3>
+                    <p>Ankur flags implausible responses in real time — before they become dirty data — and gently nudges respondents to verify their answers.</p>
+                </div>
+                <div class="feature-phone">
+                    <div class="wa-header">
+                        <div class="wa-avatar">AK</div>
+                        <div class="wa-info"><div class="wa-name">Ankur — 60 Decibels</div><div class="wa-status">online</div></div>
+                    </div>
+                    <div class="wa-messages" data-chat="3">
+                        <div class="bubble ankur" data-delay="0">How many adults currently live in your household?<div class="btime">10:31</div></div>
+                        <div class="bubble user" data-delay="1200">55<div class="btime">10:31</div></div>
+                        <div class="typing" data-delay="2000"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="bubble ankur" data-delay="3000">That seems like quite a large number! Just to make sure — are there really 55 adults in your household, or could that have been a typo?<div class="btime">10:31</div></div>
+                        <div class="bubble user" data-delay="4400">Oh sorry, I meant 5!<div class="btime">10:32</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4: Attention / Red Herring Check -->
+            <div class="feature-card">
+                <div class="feature-info">
+                    <div class="feature-num">04</div>
+                    <h3>Attention Checks</h3>
+                    <p>Ankur embeds subtle attention checks mid-survey to detect inattentive respondents — protecting data quality before it becomes a downstream problem.</p>
+                </div>
+                <div class="feature-phone">
+                    <div class="wa-header">
+                        <div class="wa-avatar">AK</div>
+                        <div class="wa-info"><div class="wa-name">Ankur — 60 Decibels</div><div class="wa-status">online</div></div>
+                    </div>
+                    <div class="wa-messages" data-chat="4">
+                        <div class="bubble ankur" data-delay="0">Quick check before we continue — what colour is the sky?<div class="btime">10:44</div></div>
+                        <div class="bubble user" data-delay="1100">Green<div class="btime">10:44</div></div>
+                        <div class="typing" data-delay="1900"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="bubble ankur" data-delay="3000">Oh, it seems like you might not be paying full attention right now. Shall we continue the survey at a different time, or would you be willing to carry on for just another minute now?<div class="btime">10:44</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5: Incentive Payouts -->
+            <div class="feature-card">
+                <div class="feature-info">
+                    <div class="feature-num">05</div>
+                    <h3>Incentive Payouts via WhatsApp</h3>
+                    <p>Cost savings from replacing human RAs can be redirected directly to respondents as incentives — paid out instantly via WhatsApp Pay or mobile money. Higher incentives mean higher completion rates and better sample quality.</p>
+                    <p style="font-size: 0.8rem; font-style: italic; color: #888; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">* Note: This feature is not included in the current live prototype, but is a possible feature to develop in the future.</p>
+                </div>
+                <div class="feature-phone">
+                    <div class="wa-header">
+                        <div class="wa-avatar">AK</div>
+                        <div class="wa-info"><div class="wa-name">Ankur — 60 Decibels</div><div class="wa-status">online</div></div>
+                    </div>
+                    <div class="wa-messages" data-chat="5">
+                        <div class="bubble ankur" data-delay="0">Thank you so much for completing the survey! Your feedback will help d.light improve their product for thousands of customers.<div class="btime">10:58</div></div>
+                        <div class="typing" data-delay="1200"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="bubble ankur" data-delay="2400" style="background: transparent; box-shadow: none; padding: 0;">
+                            <div class="wa-payment-card">
+                                <div class="wa-payment-amount">₹500</div>
+                                <div class="wa-payment-status">
+                                    <div class="wa-payment-icon">₹</div>
+                                    <div class="wa-payment-text">
+                                        Sent to <strong>You</strong>
+                                        <strong>Completed</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btime" style="background: #fff; display: inline-block; padding: 2px 6px; border-radius: 10px; margin-top: -15px; position: relative; z-index: 2; float: right; margin-right: 10px;">10:58</div>
+                        </div>
+                        <div class="bubble ankur" data-delay="3600">Your incentive has been paid out instantly! Thank you again — have a great day.<div class="btime">10:58</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo & Context Section -->
+        <div class="demo-section">
+            <h2>Try The Live Prototype</h2>
+            
+            <div class="persona-card">
+                <h3>Before you test: Your Persona</h3>
+                <p>To experience the AI Enumerator fully, we need to set the scene. This prototype is based on the <strong>Eka Fellowship</strong> study—a recently completed project as part of the 60 Decibels Inclusive Opportunity.</p>
+                <p><strong>The Context:</strong> The Eka Fellowship is India's first 8-year-long holistic school-to-work fellowship. They identify driven children from underprivileged backgrounds and commit to them from Grade 9 until their first job. They provide holistic growth, career clarity, English language skills, and financial resilience.</p>
+                <p><strong>Your Role:</strong> Pretend you are a <strong>parent of an Eka Fellow</strong>. Your child has been participating in the program, and you've seen improvements in their English, discipline, and confidence. Answer the AI Enumerator's questions from this perspective.</p>
+            </div>
+
+            <div class="demo-actions">
+                <h3 style="margin-top: 0; font-family: var(--text-heading); margin-bottom: 25px;">Scan or Click to Launch</h3>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://wa.me/14155238886?text=join%20flew-stay" alt="Scan to Launch WhatsApp" class="qr-code">
+                <p style="font-size: 0.85rem; font-family: var(--text-heading); font-weight: 700; margin-bottom: 20px;">— OR —</p>
+                <a href="https://wa.me/14155238886?text=join%20flew-stay" target="_blank" class="launch-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    Open on WhatsApp Web
+                </a>
+                <div style="margin-top:30px;font-size:0.9rem;background:#f9f9f9;padding:20px;border-radius:8px;text-align:left;border:1px solid #ddd;width:100%;max-width:400px;font-family:var(--text-heading);">
+                    <strong style="display:block;margin-bottom:10px;color:var(--primary-accent);font-size:1.1rem;">Steps to Launch:</strong>
+                    <ol style="margin:0;padding-left:20px;line-height:1.6;">
+                        <li>Tap the button or scan the QR code.</li>
+                        <li>Hit <strong>Send</strong> on the pre-filled message that appears in your WhatsApp.</li>
+                        <li>Wait for the confirmation, then reply <strong>"Hi"</strong> to start the survey!</li>
+                    </ol>
+                </div>
+                <p style="margin-top:20px;font-size:0.8rem;color:#888;text-align:center;max-width:420px;line-height:1.6;font-style:italic;">Note: This prototype is currently limited to approximately 7 unique sessions per day. Please feel free to reach out to me directly if you're facing issues accessing it.</p>
+                <div style="margin-top:35px;width:100%;border-top:1px solid var(--border-color);padding-top:35px;text-align:center;">
+                    <h3 style="font-family:var(--text-heading);margin-top:0;font-size:1.3rem;color:var(--secondary-accent);">View the Live Database</h3>
+                    <p style="font-size:0.95rem;margin-bottom:25px;color:#444;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.5;">Once you complete the survey, watch how the AI automatically structures and pushes your answers into our live backend in real-time.</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1NpLJGyqsnyAMxVhiIX8VMWJSHgWP2Uxa58b9pqB89Pc/edit" target="_blank" class="launch-btn" style="background-color:var(--secondary-accent);color:white;display:inline-flex;width:auto;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        View Raw Google Sheet
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Breakdown -->
+        <div class="architecture-section">
+            <span class="section-label">Under the Hood</span>
+            <h2>Data Pipeline: How It Was Built</h2>
+            <div class="pipeline-container">
+                <div class="pipeline-node"><h3>Twilio</h3><p>WhatsApp Sandbox securely routes incoming messages.</p></div>
+                <div class="pipeline-connector"><div class="data-packet"></div></div>
+                <div class="pipeline-node"><h3>Railway</h3><p>Fast cloud server hosts the Python backend 24/7.</p></div>
+                <div class="pipeline-connector"><div class="data-packet delay-1"></div></div>
+                <div class="pipeline-node"><h3>OpenAI</h3><p>Agent handles conversation and extracts structured data.</p></div>
+                <div class="pipeline-connector"><div class="data-packet delay-2"></div></div>
+                <div class="pipeline-node"><h3>Sheets</h3><p>Real-time database instantly saves survey results.</p></div>
+            </div>
+
+            <!-- Updated Economics -->
+            <div class="cost-breakdown" style="padding:30px;">
+                <p style="text-align:center;font-family:var(--text-heading);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin:0 0 10px;">Cost per Survey (15-question script, 2.5x message buffer)</p>
+                <div class="cost-equation" style="margin-bottom:25px;">
+                    <div class="cost-item" style="font-size:1.3rem;">$0.20<span>GPT-4o mini</span></div>
+                    <div class="cost-math" style="font-size:1.2rem;opacity:0.5;">to</div>
+                    <div class="cost-item" style="font-size:1.3rem;">$0.80<span>GPT-4o</span></div>
+                    <div class="cost-math">vs</div>
+                    <div class="cost-total" style="background:#FF6651;">$4–5<span>Human RA</span></div>
+                </div>
+
+                <!-- Savings flow visual -->
+                <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:22px 25px;margin-top:10px;">
+                    <p style="font-family:var(--text-heading);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin:0 0 14px;">Where do the savings go?</p>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:140px;background:rgba(95,164,169,0.2);border:1px solid var(--secondary-accent);border-radius:8px;padding:14px;text-align:center;">
+                            <div style="font-family:var(--text-heading);font-size:1.4rem;color:var(--secondary-accent);font-weight:700;">$0.20–0.80</div>
+                            <div style="font-size:0.8rem;opacity:0.7;margin-top:4px;">Ankur runs the survey</div>
+                        </div>
+                        <div style="font-size:1.5rem;color:var(--secondary-accent);font-weight:700;">+</div>
+                        <div style="flex:2;min-width:180px;background:rgba(255,102,81,0.15);border:1px dashed var(--primary-accent);border-radius:8px;padding:14px;text-align:center;">
+                            <div style="font-family:var(--text-heading);font-size:1.4rem;color:var(--primary-accent);font-weight:700;">~$3–4</div>
+                            <div style="font-size:0.8rem;opacity:0.7;margin-top:4px;">Redirected as respondent incentives</div>
+                            <div style="font-size:0.75rem;color:var(--primary-accent);margin-top:6px;font-weight:600;">Higher completion rates. Better data quality.</div>
+                        </div>
+                        <div style="font-size:1.5rem;color:rgba(255,255,255,0.4);">=</div>
+                        <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:14px;text-align:center;">
+                            <div style="font-family:var(--text-heading);font-size:1.4rem;color:#fff;font-weight:700;">$4–5</div>
+                            <div style="font-size:0.8rem;opacity:0.7;margin-top:4px;">Same budget. Much better outcome.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Link to other ideas -->
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <a href="other_ideas.html" class="launch-btn" style="display: inline-flex; background-color: var(--text-dark); border-color: var(--border-color);">
+                Other AI products I'm exploring &rarr;
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+    // Animate chat bubbles when scrolled into view
+    const chats = document.querySelectorAll('[data-chat]');
+    const chatObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const container = entry.target;
+                const bubbles = container.querySelectorAll('.bubble[data-delay]');
+                const typings = container.querySelectorAll('.typing[data-delay]');
+                typings.forEach(t => {
+                    const d = parseInt(t.getAttribute('data-delay'));
+                    setTimeout(() => { t.classList.add('visible'); }, d);
+                    setTimeout(() => { t.classList.remove('visible'); }, d + 900);
+                });
+                bubbles.forEach(b => {
+                    const d = parseInt(b.getAttribute('data-delay'));
+                    setTimeout(() => b.classList.add('visible'), d);
+                });
+                chatObserver.unobserve(container);
+            }
+        });
+    }, { threshold: 0.3 });
+    chats.forEach(c => chatObserver.observe(c));
+
+    // Animate cost bars when scrolled into view
+    const costSection = document.getElementById('cost-compare');
+    const costObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                document.querySelectorAll('.cost-fill').forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-width') + '%';
+                });
+                costObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.4 });
+    if (costSection) costObserver.observe(costSection);
+    </script>
+
+</body>
+</html>

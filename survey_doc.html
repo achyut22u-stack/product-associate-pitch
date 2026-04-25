@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+        font-family: "Calibri", "Helvetica Neue", Arial, sans-serif;
+    }
+    .page {
+        background-color: white;
+        width: 21cm;
+        min-height: 29.7cm;
+        padding: 2.54cm;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+        line-height: 1.5;
+        color: #000;
+    }
+    .header {
+        font-weight: bold;
+        font-size: 14pt;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-weight: bold;
+        text-decoration: underline;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    .instruction {
+        color: #666;
+        font-style: italic;
+        font-size: 10pt;
+    }
+    .question {
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .options {
+        margin-left: 20px;
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .options li {
+        margin-bottom: 4px;
+    }
+    .options li::before {
+        content: "□ ";
+        color: #999;
+    }
+    .open-ended {
+        margin-left: 20px;
+        color: #666;
+    }
+    .brand {
+        color: #FF5A5F;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <span class="brand">60 decibels</span> | Eka Fellowship Impact Survey
+        </div>
+
+        <div class="section-title">Company Context:</div>
+        <p>The Eka Fellowship is a long-term fellowship programme designed to support young under-privileged children across stages of education. It focuses on career awareness, skills and financial resilience to achieve social mobility. They offer support to the Eka Fellowship students from 9th standard until they get their first job.</p>
+
+        <div class="section-title">Introduction:</div>
+        <p>Hello, can I speak to [Respondent Name]? My name is [Research Assistant Name] and I am calling from a company called 60 Decibels. I am conducting research on behalf of Eka Fellowship with the parents of children that are either taking part in, or have taken part in the Eka Fellowship programme, to learn about you and get your feedback. This interview is voluntary, your responses are anonymous, and will not affect the service you receive.</p>
+
+        <div class="instruction">
+            • Record birth year to confirm survey eligibility (>18 years old).<br>
+            • Response types: single-select (SS), open-ended (OE).
+        </div>
+
+        <div class="section-title">Core Questionnaire:</div>
+
+        <div class="question">1. Has your child taken part in or is currently taking part in Eka’s fellowship programme? (SS)</div>
+        <ul class="options">
+            <li>Yes</li>
+            <li>No <i>[If No, end interview]</i></li>
+        </ul>
+
+        <div class="question">2. Before Eka Fellowship, did your child have access to a similar programme? (SS)</div>
+        <ul class="options">
+            <li>Yes</li>
+            <li>No</li>
+        </ul>
+
+        <div class="question">3. On a scale of 0-10, how likely are you to recommend the Eka Fellowship programme to a friend or family member? (SS)</div>
+        <div class="instruction" style="margin-left:20px;">(0 is not at all likely and 10 is extremely likely)</div>
+
+        <div class="question">4. [NPS Follow-up] (OE)</div>
+        <ul class="options" style="list-style-type: disc;">
+            <li style="list-style-type: none;"><i>[If 0-6:]</i> What actions could Eka Fellowship take to make you more likely to recommend them?</li>
+            <li style="list-style-type: none;"><i>[If 7-8:]</i> What specifically about Eka Fellowship’s programme caused you to give it the score?</li>
+            <li style="list-style-type: none;"><i>[If 9-10:]</i> What specifically about Eka Fellowship would cause you to recommend them?</li>
+        </ul>
+
+        <div class="question">5. Has your child experienced any challenges with the Eka Fellowship programme? (SS)</div>
+        <ul class="options">
+            <li>Yes</li>
+            <li>No <i>[go to Q7]</i></li>
+        </ul>
+
+        <div class="question">6. What was your child’s challenge with the Eka Fellowship programme? (OE)</div>
+        <div class="open-ended">"..."</div>
+
+        <div class="question">7. What about Eka Fellowship’s programme can be improved? (OE)</div>
+        <div class="open-ended">"..."</div>
+
+        <div class="section-title">Wrap-up:</div>
+        <p>Would you mind sharing your age with us? Can you just confirm your name?</p>
+        <p><i>End interview:</i> Thank you very much for your time. We will use this information to inform Eka Fellowship how they can improve their programme. Have a great day!</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Asset Generator: Product Vision - 60 Decibels</title>
+    <style>
+        /* Typography: 60 Decibels Proprietary Fonts */
+        @font-face {
+            font-family: 'Union';
+            src: url('./[Brand] Guidelines/[Brand-Guidelines] Typography/Union/union_regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Union';
+            src: url('./[Brand] Guidelines/[Brand-Guidelines] Typography/Union/union_bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Maax Mono';
+            src: url('./[Brand] Guidelines/[Brand-Guidelines] Typography/Maax Mono/Maax Mono - Regular-205TF/Maax Mono - Regular-205TF.woff2') format('woff2'),
+                 url('./[Brand] Guidelines/[Brand-Guidelines] Typography/Maax Mono/Maax Mono - Regular-205TF/Maax Mono - Regular-205TF.woff') format('woff'),
+                 url('./[Brand] Guidelines/[Brand-Guidelines] Typography/Maax Mono/Maax Mono - Regular-205TF/Maax Mono - Regular-205TF.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* 60 Decibels Brand Variables */
+        :root {
+            --font-headings: 'Maax Mono', 'Space Mono', monospace;
+            --font-body: 'Union', 'Inter', sans-serif;
+            
+            --color-black: #000000;
+            --color-white: #FFFFFF;
+            --color-gold: #F4D276;
+            --color-soft-teal: #E7F1F2;
+            --color-sage: #A1BA9E;
+            --color-soft-red: #FF8075;
+            --color-lavender: #C6C0CD;
+            --color-offwhite-grn: #F1F5F0;
+            --color-mint-grey: #DEE7DD;
+            --color-beige: #FAFAF7;
+            --color-coral: #FF6651;
+            --color-dark-navy: #1D2B38;
+        }
+
+        /* Base Resets */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-black);
+            background-color: var(--color-beige);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography Base */
+        h1, h2, h3, h4, h5, .mono-text {
+            font-family: var(--font-headings);
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        /* Nav back */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-family: var(--font-headings);
+            color: var(--color-dark-navy);
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid var(--color-black);
+            padding: 10px 20px;
+            border-radius: 45px;
+            transition: all 0.3s ease;
+            background: var(--color-white);
+            z-index: 100;
+            box-shadow: 4px 4px 0 var(--color-black);
+        }
+        .back-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-black);
+            background-color: var(--color-coral);
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 5% 80px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero p.tagline {
+            font-family: var(--font-headings);
+            font-size: 1.2rem;
+            color: var(--color-coral);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        /* Mockup Container */
+        .mockup-wrapper {
+            margin: 40px auto;
+            position: relative;
+            max-width: 900px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .pdf-source {
+            width: 250px;
+            height: 350px;
+            background: var(--color-white);
+            border: 1px solid var(--color-black);
+            padding: 20px;
+            box-shadow: 10px 10px 0 var(--color-mint-grey);
+            position: relative;
+            transform: rotate(-3deg);
+        }
+
+        .pdf-source::after {
+            content: "Standard PDF Report";
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-headings);
+            font-size: 0.8rem;
+        }
+
+        .arrow-connector {
+            font-size: 3rem;
+            color: var(--color-coral);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .carousel-output {
+            width: 350px;
+            height: 437px; /* 1080x1350 ratio */
+            background: var(--color-white);
+            border: 1px solid var(--color-black);
+            box-shadow: 15px 15px 0 var(--color-sage);
+            position: relative;
+            overflow: hidden;
+            transform: rotate(2deg);
+        }
+
+        .carousel-output img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-output::after {
+            content: "LinkedIn PDF Carousel";
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-headings);
+            font-size: 0.8rem;
+        }
+
+        /* Content Sections */
+        .main-content {
+            max-width: 1100px;
+            margin: 100px auto;
+            padding: 0 5%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .card {
+            background: var(--color-white);
+            border: 1px solid var(--color-black);
+            padding: 40px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0 var(--color-soft-teal);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--color-coral);
+            border-bottom: 2px solid var(--color-beige);
+            padding-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: var(--color-dark-navy);
+            opacity: 0.9;
+        }
+
+        /* Implementation Section */
+        .implementation {
+            background: var(--color-dark-navy);
+            color: var(--color-white);
+            padding: 100px 5%;
+            margin-top: 100px;
+        }
+
+        .implementation-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .implementation h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .step {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 60px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            font-family: var(--font-headings);
+            font-size: 3rem;
+            color: var(--color-coral);
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        .step-content h4 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--color-gold);
+        }
+
+        .step-content p {
+            opacity: 0.8;
+            max-width: 700px;
+        }
+
+        /* Footer CTA */
+        .cta-section {
+            text-align: center;
+            padding: 100px 5%;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 20px 40px;
+            font-family: var(--font-headings);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-coral);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .step { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="other_ideas.html" class="back-btn">&larr; Back to Dashboard</a>
+
+    <header class="hero">
+        <p class="tagline">Internal Productivity Tool</p>
+        <h1>From 30-Page PDF to <br>Viral LinkedIn Carousel.</h1>
+        <p style="max-width: 700px; margin: 0 auto; font-size: 1.2rem; opacity: 0.8;">
+            An AI-powered engine that transforms dense impact reports into premium, swipeable social assets in seconds—saving analysts hours of manual design work.
+        </p>
+
+        <div class="mockup-wrapper">
+            <div class="pdf-source">
+                <div style="height: 20px; width: 100%; background: var(--color-mint-grey); margin-bottom: 10px;"></div>
+                <div style="height: 10px; width: 80%; background: var(--color-offwhite-grn); margin-bottom: 5px;"></div>
+                <div style="height: 10px; width: 90%; background: var(--color-offwhite-grn); margin-bottom: 5px;"></div>
+                <div style="height: 10px; width: 70%; background: var(--color-offwhite-grn); margin-bottom: 15px;"></div>
+                <div style="height: 100px; width: 100%; border: 1px solid var(--color-mint-grey); display: flex; align-items: center; justify-content: center; font-family: var(--font-headings); font-size: 0.6rem; color: #ccc;">Dense Data Table</div>
+            </div>
+            
+            <div class="arrow-connector">&rarr;</div>
+
+            <div class="carousel-output">
+                <img src="60db_linkedin_carousel_mockup.png" alt="LinkedIn Carousel Mockup">
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="grid">
+            <div class="card">
+                <h3>The Problem</h3>
+                <p>60dB produces world-class data, but it's often trapped in long PDFs. Clients want "snackable" highlights for their followers, and internal teams spend too much time "clipping" and redesigning these assets manually.</p>
+            </div>
+            <div class="card">
+                <h3>The Solution</h3>
+                <p>A "one-click" internal asset generator. Upload a report, and the AI parses the data, extracts the "Hero Narrative", and populates programmatic brand templates for high-impact LinkedIn Carousels.</p>
+            </div>
+            <div class="card">
+                <h3>The Impact</h3>
+                <p>Increases 60dB's social presence, delights clients with instant "marketing-ready" assets, and frees up analyst capacity by automating 100% of the initial asset design phase.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="implementation">
+        <div class="implementation-inner">
+            <h2>Implementation Roadmap</h2>
+            
+            <div class="step">
+                <div class="step-num">01</div>
+                <div class="step-content">
+                    <h4>AI Narrative Mapping</h4>
+                    <p>Develop an LLM pipeline that maps report findings to a 7-slide "Story Arc" (The Hook, The Challenge, The Methodology, The Data, The Action, The Outcome, The CTA).</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">02</div>
+                <div class="step-content">
+                    <h4>Programmatic Canvas</h4>
+                    <p>Build 5 high-fidelity HTML/CSS templates based on 60dB's premium website case studies. These templates use the proprietary <strong>Union</strong> and <strong>Maax Mono</strong> fonts for strict brand compliance.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">03</div>
+                <div class="step-content">
+                    <h4>Headless Rendering</h4>
+                    <p>Integrate Playwright to render the populated templates into 1080x1350px PNGs and stitch them into a downloadable PDF package for immediate LinkedIn upload.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <p style="font-family: var(--font-headings); margin-bottom: 20px; color: var(--color-coral);">READY TO SCALE IMPACT?</p>
+        <a href="other_ideas.html" class="btn-primary">Explore More Product Ideas</a>
+    </section>
+
+</body>
+</html>
